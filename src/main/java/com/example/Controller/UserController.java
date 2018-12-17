@@ -53,10 +53,10 @@ public class UserController {
         catch (Exception e) {
             e.printStackTrace();
         }
-        HttpEntity <String> httpEntity = new HttpEntity <String> (json.toString(), httpHeaders);
+        //HttpEntity <String> httpEntity = new HttpEntity <String> (json.toString(), httpHeaders);
 
-        RestTemplate restTemplate = new RestTemplate();
-        String response = restTemplate.postForObject("/createuser", httpEntity, String.class);
+        //RestTemplate restTemplate = new RestTemplate();
+        //String response = restTemplate.postForObject("/createuser", httpEntity, String.class);
 
         //JSONObject jsonObj = new JSONObject(response);
 
