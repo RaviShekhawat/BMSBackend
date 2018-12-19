@@ -1,7 +1,10 @@
 package com.example.Model;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.ManyToOne;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -11,23 +14,24 @@ import java.util.stream.Collectors;
 @Component
 public class TheatreHall {
 
-    private byte hallid;
-    private byte rows;
-    private byte columns;
+    private Byte hallid;
+    private Byte rows;
+    private Byte columns;
     private boolean is_active;
     private Movie movie;
     private int vacant_seats;
     private boolean arr[][];
     Map<Byte,Byte> vacantseatscount;
 
-    TheatreHall(byte hallid,byte rows,byte columns)
+    @Autowired
+    TheatreHall(Byte hallid,Byte rows,Byte columns)
     {
         this.hallid = hallid;
         this.rows = rows;
         this.columns = columns;
         this.arr = new boolean[rows][columns];
         vacant_seats = rows*columns;
-        for(byte i=0;i<rows;i++)
+        for(Byte i=0;i<rows;i++)
         {
             vacantseatscount.put(i,columns);
         }
@@ -76,27 +80,27 @@ public class TheatreHall {
         this.movie = movie;
     }
 
-    public byte getHallid() {
+    public Byte getHallid() {
         return hallid;
     }
 
-    public void setHallid(byte hallid) {
+    public void setHallid(Byte hallid) {
         this.hallid = hallid;
     }
 
-    public byte getRows() {
+    public Byte getRows() {
         return rows;
     }
 
-    public void setRows(byte rows) {
+    public void setRows(Byte rows) {
         this.rows = rows;
     }
 
-    public byte getColumns() {
+    public Byte getColumns() {
         return columns;
     }
 
-    public void setColumns(byte columns) {
+    public void setColumns(Byte columns) {
         this.columns = columns;
     }
 

@@ -1,14 +1,23 @@
 package com.example.Model;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import javax.persistence.*;
 import java.sql.Time;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+@Component
 @Entity(name="Theatre")
 public class Theatre {
 
+    @Autowired
+    Theatre()
+    {
+
+    }
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name="Id")
@@ -19,9 +28,9 @@ public class Theatre {
     private String city;
     @Column(name="is_active")
     private Boolean is_active;
-
+    @Transient
     private List<TheatreHall> halls;
-
+    @Transient
     private Map <Movie,LinkedList<Time>> map;
 
     public Boolean getIs_active() {

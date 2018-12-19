@@ -5,13 +5,18 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 
-@Data
+/*@Data
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+*/
+@Component
 @Entity(name="User")
 public class User {
 

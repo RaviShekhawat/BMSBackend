@@ -25,8 +25,8 @@ public class TheatreController {
     Movie movie;
     @Autowired
     Theatre theatre;
-    @Autowired
-    TheatreHall theatrehall;
+    //@Autowired
+    //TheatreHall theatrehall;
     @Autowired
     TheatreRepository theatrerepository;
 

@@ -1,8 +1,11 @@
 package com.example.Model;
 
+import org.springframework.stereotype.Component;
+
 import javax.persistence.*;
 import java.util.Date;
 
+@Component
 @Entity(name="Ticket")
 public class Ticket {
 
@@ -10,23 +13,19 @@ public class Ticket {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name="Id")
     long id;
-    @Column(name="Theatre")
     @ManyToOne
     private
     Theatre theatre;
-    @Column(name="Movie")
     @ManyToOne
-    private
-    Movie movie;
+    private Movie movie;
     @Column(name="price")
     private float price;
     @Column(name = "event_type")
     private EventCategory event;
     @Column(name="booking_date")
-    private
-    Date booking_date;
-    @Column(name = "payment_type")
-    private Payment payment;
+    private Date booking_date;
+    //@Enumerated(EnumType.STRING)
+    //private Payment payment;
 
     public Theatre getTheatre() {
         return theatre;
@@ -68,11 +67,11 @@ public class Ticket {
         this.booking_date = booking_date;
     }
 
-    public Payment getPayment() {
+    /*public Payment getPayment() {
         return payment;
     }
 
     public void setPayment(Payment payment) {
         this.payment = payment;
-    }
+    }*/
 }

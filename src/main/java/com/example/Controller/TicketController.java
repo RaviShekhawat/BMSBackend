@@ -26,7 +26,7 @@ public class TicketController {
     Movie movie;
     @Autowired
     Theatre theatre;
-    @Autowired
+
     TheatreHall theatrehall;
 
 

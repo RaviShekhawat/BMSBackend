@@ -6,6 +6,8 @@ package com.example.Model;
 import javax.validation.constraints.NotNull;
 //import org.jetbrains.annotations.Nullable;
 import org.hibernate.annotations.CollectionType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Date;
@@ -13,9 +15,15 @@ import javax.persistence.*;
 
 import java.util.List;
 
+@Component
 @Entity(name="Movie")
 public class Movie {
 
+    @Autowired
+    public Movie()
+    {
+
+    }
     public Movie(String name,MovieType type,Date releasedate,
           int movie_length, Genre genre)
     {
@@ -53,9 +61,9 @@ public class Movie {
     @Column(name="director")
     @NotNull
     String director;
-
+    @Transient
     List<String> cities;
-
+    @Transient
     List<String> cast;
 
     @Enumerated(EnumType.STRING)
