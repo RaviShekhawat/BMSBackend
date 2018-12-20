@@ -1,6 +1,7 @@
 package com.example.Model;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
@@ -9,11 +10,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-@Component
+@EnableJpaAuditing
 @Entity(name="Theatre")
 public class Theatre {
 
-    @Autowired
     Theatre()
     {
 

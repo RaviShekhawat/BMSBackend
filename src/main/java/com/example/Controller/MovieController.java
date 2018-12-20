@@ -5,6 +5,9 @@ import com.example.Model.Movie;
 import com.example.Model.MovieType;
 import com.example.Repository.MovieRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -20,6 +23,8 @@ import java.util.Optional;
 import static com.sun.deploy.net.protocol.ProtocolType.HTTP;
 
 @RestController
+@EnableJpaRepositories("com.example.Repository")
+@ComponentScan(basePackages = {"com.example.Controller","com.example.Model"})
 @Component
 public class MovieController {
 

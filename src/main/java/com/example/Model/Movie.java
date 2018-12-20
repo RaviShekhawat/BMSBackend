@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull;
 //import org.jetbrains.annotations.Nullable;
 import org.hibernate.annotations.CollectionType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -15,11 +16,11 @@ import javax.persistence.*;
 
 import java.util.List;
 
-@Component
+@EnableJpaAuditing
 @Entity(name="Movie")
 public class Movie {
 
-    @Autowired
+
     public Movie()
     {
 

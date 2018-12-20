@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
@@ -16,7 +17,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 */
-@Component
+@EnableJpaAuditing
 @Entity(name="User")
 public class User {
 
@@ -37,6 +38,11 @@ public class User {
     //@NotNull
     private long contact_no;
 
+    @Autowired
+    public User()
+    {
+
+    }
     public User(String name,String password,String emailId,long contact_no)
     {
         this.name=name;
