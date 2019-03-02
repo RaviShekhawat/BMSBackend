@@ -1,30 +1,20 @@
 package com.example.Controller;
 
-import com.example.Model.Genre;
-import com.example.Model.Movie;
-import com.example.Model.MovieType;
 import com.example.Model.User;
-import com.example.Repository.MovieRepository;
 import com.example.Repository.UserRepository;
-import com.sun.deploy.net.HttpResponse;
+import org.apache.commons.validator.routines.EmailValidator;
 import org.json.JSONObject;
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @EnableJpaRepositories("com.example.Repository")
 @ComponentScan(basePackages = {"com.example.Controller","com.example.Model"})
@@ -34,75 +24,50 @@ public class UserController {
 
     @Autowired
     private UserRepository repository;
-    @Autowired
-    User user;
-
-    JSONObject json;
 
     @RequestMapping(value="/createuser", method= RequestMethod.POST)
-    public void createUser(@RequestBody String name, @RequestBody String password,@RequestBody String emailId, @RequestBody long contact_no) {
+    public ResponseEntity createUser(@RequestBody User user) {
 
-        User user=new User(name,password,emailId,contact_no);
+        Pattern p = Pattern.compile("[7-9][0-9]{9}");
+        Matcher m = p.matcher(user.getContact_no());
+        if(user.getName() == null || user.getEmailId()==null || user.getPassword()==null)
+            return new ResponseEntity<Object>("Invalid name or email",HttpStatus.EXPECTATION_FAILED);
+        else if(user.getPassword().length()<6)
+            return new ResponseEntity<Object>("Password length can't be less than 6 characters",HttpStatus.EXPECTATION_FAILED);
+        else if(!EmailValidator.getInstance().isValid(user.getEmailId()))
+            return new ResponseEntity<Object>("EmailID is not valid",HttpStatus.EXPECTATION_FAILED);
+        else if(!(m.find() && m.group().equals(user.getContact_no())))
+            return new ResponseEntity<Object>("Contact number is not valid",HttpStatus.EXPECTATION_FAILED);
 
-        if(name==null || emailId==null)
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,"name or emailid is null");
-
-
+        user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
         repository.save(user);
-
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.set("Content-Type", "application/json");
-
-        try{
-            JSONObject json = new JSONObject();
-
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        //HttpEntity <String> httpEntity = new HttpEntity <String> (json.toString(), httpHeaders);
-
-        //RestTemplate restTemplate = new RestTemplate();
-        //String response = restTemplate.postForObject("/createuser", httpEntity, String.class);
-
-        //JSONObject jsonObj = new JSONObject(response);
-
-
+        return new ResponseEntity<Object>(HttpStatus.CREATED);
     }
 
-    @RequestMapping(value="/deleteuser", method= RequestMethod.POST)
-    public HttpStatus deleteUser(@RequestBody long id) {
+    @RequestMapping(value="/validateuser", method= RequestMethod.GET)
+    public ResponseEntity validateUser(@RequestParam (value="emailid") String emailid,@RequestParam (value="password")String plainpassword) {
 
-        if(repository.existsById(id)) {
-            repository.deleteById(id);
-            return  HttpStatus.OK;
-        }
-
+        User user= repository.findUserBymailID(emailid);
+        if(user==null)
+            return new ResponseEntity<Object>("No user with this emailID",HttpStatus.BAD_REQUEST);
+        else if (!BCrypt.checkpw(plainpassword, user.getPassword()))
+            return new ResponseEntity<Object>("Invalid credentials",HttpStatus.UNAUTHORIZED);
         else
-            throw new HttpClientErrorException(HttpStatus.NOT_FOUND,"no user with this Id");
-    }
+            return new ResponseEntity<Object>("Logged in successfully",HttpStatus.OK);
 
-    @RequestMapping(value="/finduser", method= RequestMethod.GET)
-    public User findUserById(@RequestBody long id) {
-
-        if(repository.existsById(id))
-            return repository.findUserById(id);
-        else
-            throw new HttpClientErrorException(HttpStatus.NOT_FOUND,"no user with this Id");
     }
 
     @RequestMapping(value="/countusers", method= RequestMethod.GET)
     public long findUsersCount() {
-
         return repository.count();
     }
 
     @RequestMapping(value="/updatepassword", method= RequestMethod.PUT)
-    public HttpStatus updatepassword(long id,String password) {
+    public HttpStatus updatePassword(@RequestParam (value="emailid") String emailid, @RequestParam (value="password")String password) {
 
-        if(repository.existsById(id))
+        if(repository.findUserBymailID(emailid)!=null)
         {
-            User user=repository.findUserById(id);
+            User user=repository.findUserBymailID(emailid);
             user.setPassword(password);
             repository.save(user);
             return HttpStatus.OK;

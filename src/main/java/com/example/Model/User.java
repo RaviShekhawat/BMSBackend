@@ -5,19 +5,23 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 /*@Data
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
 */
-@EnableJpaAuditing
+@Component
 @Entity(name="User")
 public class User {
 
@@ -26,29 +30,23 @@ public class User {
     @Column(name="Id")
     private long id;
     @Column(name = "user_name")
-    //@NotNull
+    @NotNull
+    @Length(min=2, max=12, message = "username should be between 2 and 10 characters")
     private String name;
     @Column(name = "password")
-    //@NotNull
+    @Length(min=6, max=12, message = "password should be between 6 and 12 characters")
+    @NotNull
     private String password;
     @Column(name = "emailId")
-    //@NotNull
+    @NotNull
+    @Email
     private String emailId;
     @Column(name = "contact_no")
-    //@NotNull
-    private long contact_no;
+    private String contact_no;
 
-    @Autowired
     public User()
     {
 
-    }
-    public User(String name,String password,String emailId,long contact_no)
-    {
-        this.name=name;
-        this.password=password;
-        this.emailId=emailId;
-        this.contact_no=contact_no;
     }
 
     public long getId() {
@@ -83,11 +81,22 @@ public class User {
         this.emailId = emailId;
     }
 
-    public long getContact_no() {
+    public String getContact_no() {
         return contact_no;
     }
 
-    public void setContact_no(long contact_no) {
+    public void setContact_no(String contact_no) {
         this.contact_no = contact_no;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", password='" + password + '\'' +
+                ", emailId='" + emailId + '\'' +
+                ", contact_no=" + contact_no +
+                '}';
     }
 }

@@ -1,52 +1,96 @@
 package com.example.Model;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
-import org.springframework.stereotype.Component;
+import org.joda.time.DateTime;
 
 import javax.persistence.*;
-import java.sql.Time;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import javax.validation.constraints.NotNull;
+import java.time.LocalTime;
+import java.util.*;
 
-@EnableJpaAuditing
-@Entity(name="Theatre")
+
+@Entity(name="theatre")
 public class Theatre {
 
     Theatre()
-    {
+    {}
 
-    }
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name="Id")
     private long id;
+    @Column(name="name",unique = true)
+    @NotNull
+    private String name;
     @Column(name="address")
+    @NotNull
     private String address;
     @Column(name="city")
+    @NotNull
     private String city;
     @Column(name="is_active")
-    private Boolean is_active;
-    @Transient
-    private List<TheatreHall> halls;
-    @Transient
-    private Map <Movie,LinkedList<Time>> map;
+    @NotNull
+    private Boolean isactive;
+    @ElementCollection
+    @CollectionTable(name = "theatre_movies", joinColumns = @JoinColumn(name = "theatre_id"))
+    @Column(name = "movies")
+    private List<String> movienames = new LinkedList<>();
 
-    public Boolean getIs_active() {
-        return is_active;
+    @ElementCollection
+    @MapKeyColumn()
+    @Column(name = "showtimings")
+    @CollectionTable(name = "theatreshows", joinColumns = @JoinColumn(name = "theatre_id"))
+    private Map<Long,LinkedList<DateTime>> showtimings = new LinkedHashMap<>();
+
+
+    public List<String> getMovienames() {
+        return movienames;
     }
 
-    public void setIs_active(Boolean is_active) {
-        this.is_active = is_active;
+    public void setMovieNames(List<String> movienames) {
+        this.movienames = movienames;
     }
 
-    public List<TheatreHall> getHalls() {
-        return halls;
+    public void setMovienames(List<String> movienames) {
+        this.movienames = movienames;
     }
 
-    public void setHalls(List<TheatreHall> halls) {
-        this.halls = halls;
+    public Map<Long, LinkedList<DateTime>> getShowtimings() {
+        return showtimings;
+    }
+
+    public void setShowtimings(Map<Long, LinkedList<DateTime>> showtimings) {
+        this.showtimings = showtimings;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Theatre theatre = (Theatre) o;
+        return id == theatre.id;
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id);
+    }
+
+
+    public Boolean getIsactive() {
+        return isactive;
+    }
+
+    public void setIsactive(Boolean isactive) {
+        this.isactive = isactive;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public long getId() {
@@ -73,11 +117,18 @@ public class Theatre {
         this.city = city;
     }
 
-    public Map<Movie, LinkedList<Time>> getMap() {
-        return map;
+
+    @Override
+    public String toString() {
+        return "Theatre{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", city='" + city + '\'' +
+                ", isactive=" + isactive +
+
+
+                '}';
     }
 
-    public void setMap(Map<Movie, LinkedList<Time>> map) {
-        this.map = map;
-    }
 }

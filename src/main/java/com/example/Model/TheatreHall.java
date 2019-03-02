@@ -1,67 +1,99 @@
 package com.example.Model;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.joda.time.DateTime;
 
-import javax.persistence.ManyToOne;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.util.*;
 
-@Component
+import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
+
+@Entity(name="theatrehall")
 public class TheatreHall {
-
-    private Byte hallid;
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @Column(name="id")
+    private long hallid;
+    @Column(name="no_of_rows")
+    @NotNull
     private Byte rows;
+    @Column(name="no_of_columns")
+    @NotNull
     private Byte columns;
+    @Column(name="is_active")
     private boolean is_active;
-    private Movie movie;
+    @Column(name="theatre_id")
+    //@NotNull
+    private long theatre_id;
+    @Column(name="movie_id")
+    private long movie_id;
+    @Column(name = "movie_start_date")
+    @JsonFormat(shape = STRING, pattern = "dd-MM-yyyy")
+    private Date start_date;
+    @Column(name = "movie_end_date")
+    @JsonFormat(shape = STRING, pattern = "dd-MM-yyyy")
+    private Date end_date;
+    @Column(name="vacant_seats")
     private int vacant_seats;
-    private boolean arr[][];
-    Map<Byte,Byte> vacantseatscount;
 
-    @Autowired
-    TheatreHall(Byte hallid,Byte rows,Byte columns)
+    @ElementCollection
+    @MapKeyColumn()
+    @Column()
+    @CollectionTable(name = "halls_vacant", joinColumns = @JoinColumn(name = "theatrehall_id"))
+    private Map<String,LinkedHashMap<Byte,LinkedHashSet<Byte>>> vacantseatscount = new LinkedHashMap<>();
+
+    TheatreHall()
     {
-        this.hallid = hallid;
-        this.rows = rows;
-        this.columns = columns;
-        this.arr = new boolean[rows][columns];
-        vacant_seats = rows*columns;
-        for(Byte i=0;i<rows;i++)
-        {
-            vacantseatscount.put(i,columns);
-        }
+
     }
 
-    public static <K, V extends Comparable<V>> Map<K, V>
-    sortByValues(final Map<K, V> map) {
-        Comparator<K> valueComparator =
-                new Comparator<K>() {
-                    public int compare(K k1, K k2) {
-                        int compare =
-                                map.get(k1).compareTo(map.get(k2));
-                        if (compare == 0)
-                            return 1;
-                        else
-                            return compare*-1;
-                    }
-                };
-        Map<K, V> sortedByValues =
-                new TreeMap<K, V>(valueComparator);
-        sortedByValues.putAll(map);
-        return sortedByValues;
-    }
-
-    public Map<Byte, Byte> getVacantseatscount() {
+    public Map<String, LinkedHashMap<Byte, LinkedHashSet<Byte>>> getVacantseatscount() {
         return vacantseatscount;
     }
 
-    public void setVacantseatscount(Map<Byte, Byte> vacantseatscount) {
+    public void setVacantseatscount(Map<String, LinkedHashMap<Byte, LinkedHashSet<Byte>>> vacantseatscount) {
         this.vacantseatscount = vacantseatscount;
+    }
+
+    public Date getStart_date() {
+        return start_date;
+    }
+
+    public void setStart_date(Date start_date) {
+        this.start_date = start_date;
+    }
+
+    public Date getEnd_date() {
+        return end_date;
+    }
+
+    public void setEnd_date(Date end_date) {
+        this.end_date = end_date;
+    }
+
+    public void setHallid(long hallid) {
+        this.hallid = hallid;
+    }
+
+    public long getMovie_id() {
+        return movie_id;
+    }
+
+    public void setMovie_id(long movie_id) {
+        this.movie_id = movie_id;
+    }
+
+    public boolean isIs_active() {
+        return is_active;
+    }
+
+    public long getTheatre_id() {
+        return theatre_id;
+    }
+
+    public void setTheatre_id(long theatre_id) {
+        this.theatre_id = theatre_id;
     }
 
     public int getVacant_seats() {
@@ -72,19 +104,11 @@ public class TheatreHall {
         this.vacant_seats = vacant_seats;
     }
 
-    public Movie getMovie() {
-        return movie;
-    }
-
-    public void setMovie(Movie movie) {
-        this.movie = movie;
-    }
-
-    public Byte getHallid() {
+    public long getHallid() {
         return hallid;
     }
 
-    public void setHallid(Byte hallid) {
+    public void setHallid(Long hallid) {
         this.hallid = hallid;
     }
 
@@ -112,12 +136,18 @@ public class TheatreHall {
         this.is_active = is_active;
     }
 
-    public boolean[][] getArr() {
-        return arr;
-    }
 
-    public void setArr(boolean[][] arr) {
-        this.arr = arr;
+    @Override
+    public String toString() {
+        return "TheatreHall{" +
+                "hallid=" + hallid +
+                ", rows=" + rows +
+                ", columns=" + columns +
+                ", is_active=" + is_active +
+                ", theatre_id=" + theatre_id +
+                ", movie_id=" + movie_id +
+                ", vacant_seats=" + vacant_seats +
+                ", vacantseatscount=" + vacantseatscount +
+                '}';
     }
-
 }
