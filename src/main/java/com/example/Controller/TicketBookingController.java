@@ -37,11 +37,9 @@ public class TicketBookingController {
     @Autowired
     private TicketBookingRepository ticketBookingRepository;
     @Autowired
-    private
-    TheatreRepository theatreRepository;
+    private TheatreRepository theatreRepository;
     @Autowired
-    private
-    TicketController ticketController;
+    private TicketController ticketController;
     @Autowired
     private MovieRepository movieRepository;
     @Autowired
