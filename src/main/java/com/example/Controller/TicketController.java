@@ -55,10 +55,10 @@ public class TicketController {
                 } catch (JSONException e) {
                         e.printStackTrace();
                     }
-            }
+                }
                 hall.setVacant_seats(hall.getVacant_seats() - jsonArray.size());
-        theatreHallRepository.save(hall);
-        return responsejsonArray;
+                theatreHallRepository.save(hall);
+                return responsejsonArray;
         }
     }
 

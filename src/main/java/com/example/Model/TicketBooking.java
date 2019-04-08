@@ -30,7 +30,7 @@ public class TicketBooking {
     @Column(name = "price")
     @NotNull
     @Min(value = 0)
-    private int price;
+    private float price;
     @Column(name = "booking_date")
     @JsonFormat(shape = STRING, pattern = "dd-MM-yyyy")
     private Date booking_date;
@@ -92,11 +92,11 @@ public class TicketBooking {
         this.endtime = endtime;
     }
 
-    public int getPrice() {
+    public float getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(float price) {
         this.price = price;
     }
 

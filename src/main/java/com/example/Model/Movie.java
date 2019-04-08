@@ -24,15 +24,6 @@ import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
 public class Movie {
 
     Movie(){}
-    /*public Movie(String name,MovieType type,Date releasedate,
-          int movie_length, Genre genre)
-    {
-        this.name=name;
-        this.type=type;
-        this.releasedate=releasedate;
-        this.movie_length=movie_length;
-        this.genre=genre;
-    }*/
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)

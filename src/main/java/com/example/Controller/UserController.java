@@ -68,7 +68,7 @@ public class UserController {
         if(repository.findUserBymailID(emailid)!=null)
         {
             User user=repository.findUserBymailID(emailid);
-            user.setPassword(password);
+            user.setPassword(BCrypt.hashpw(password, BCrypt.gensalt()));
             repository.save(user);
             return HttpStatus.OK;
         }

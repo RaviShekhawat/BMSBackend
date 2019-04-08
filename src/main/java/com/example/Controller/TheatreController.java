@@ -117,17 +117,17 @@ public class TheatreController {
                 theatrerepository.save(theatre);
 
 
-                    for(int i=0;i<showtimings.size();i++) {
-                        hall.getVacantseatscount().put(showtimings.get(i).toString(),new LinkedHashMap<>());
-                        LinkedHashMap<Byte,LinkedHashSet<Byte>> seats= hall.getVacantseatscount().get(showtimings.get(i).toString());
-                        for (byte j = 0; j < hall.getRows(); j++) {
-                            for (byte k = 0; k < hall.getColumns(); k++) {
+                for(int i=0;i<showtimings.size();i++) {
+                    hall.getVacantseatscount().put(showtimings.get(i).toString(),new LinkedHashMap<>());
+                    LinkedHashMap<Byte,LinkedHashSet<Byte>> seats= hall.getVacantseatscount().get(showtimings.get(i).toString());
+                    for (byte j = 0; j < hall.getRows(); j++) {
+                        for (byte k = 0; k < hall.getColumns(); k++) {
                                 //seats.computeIfAbsent(j, k1 -> new LinkedHashSet<>());
-                                if(!seats.containsKey(j))
-                                    seats.put(j,new LinkedHashSet<>());
-                                seats.get(j).add(k);
-                                hall.getVacantseatscount().put(showtimings.get(i).toString(),seats);
-                                }
+                            if(!seats.containsKey(j))
+                                seats.put(j,new LinkedHashSet<>());
+                            seats.get(j).add(k);
+                            hall.getVacantseatscount().put(showtimings.get(i).toString(),seats);
+                            }
                         }
                         //theatreHallRepository.save(hall);
                     }
@@ -141,7 +141,7 @@ public class TheatreController {
     }
 
     @RequestMapping(value="/removemovie",method= RequestMethod.POST)
-    public ResponseEntity<String> removeMovieFromAllHalls(@RequestParam (value="theatrename")String theatrename,
+    public ResponseEntity removeMovieFromAllHalls(@RequestParam (value="theatrename")String theatrename,
                                                           @RequestParam (value="name")String moviename) {
 
         boolean var=false;
@@ -168,8 +168,8 @@ public class TheatreController {
         }
     }
 
-    @RequestMapping(value="/getmovies", method= RequestMethod.GET)
-    public ResponseEntity getMovies(@RequestParam (value = "theatrename") String theatrename) {
+    @RequestMapping(value="/getmoviesbytheatre", method= RequestMethod.GET)
+    public ResponseEntity getMoviesByTheatre(@RequestParam (value = "theatrename") String theatrename) {
 
         JSONObject obj = new JSONObject();
         List<Movie> movielist= new LinkedList<Movie>();

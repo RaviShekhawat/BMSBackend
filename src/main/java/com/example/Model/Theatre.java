@@ -41,7 +41,6 @@ public class Theatre {
     @CollectionTable(name = "theatreshows", joinColumns = @JoinColumn(name = "theatre_id"))
     private Map<Long,LinkedList<DateTime>> showtimings = new LinkedHashMap<>();
 
-
     public List<String> getMovienames() {
         return movienames;
     }
