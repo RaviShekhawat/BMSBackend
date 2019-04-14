@@ -21,7 +21,7 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 */
-@Component
+
 @Entity(name="User")
 public class User {
 

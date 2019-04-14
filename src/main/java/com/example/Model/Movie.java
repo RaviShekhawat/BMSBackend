@@ -4,13 +4,7 @@ package com.example.Model;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-//import org.jetbrains.annotations.Nullable;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Builder;
-import org.hibernate.validator.constraints.time.DurationMax;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Date;
