@@ -11,7 +11,6 @@ import java.util.Date;
 import javax.persistence.*;
 
 import java.util.List;
-
 import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
 
 @Entity(name="movie")
