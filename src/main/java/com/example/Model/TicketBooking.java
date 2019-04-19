@@ -40,7 +40,6 @@ public class TicketBooking {
     @Column(name = "end_time")
     @NotNull
     private DateTime endtime;
-
     @Column(name = "is_refundable")
     private Boolean isrefundable;
 
