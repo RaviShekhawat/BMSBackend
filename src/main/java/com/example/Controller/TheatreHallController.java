@@ -35,10 +35,10 @@ public class TheatreHallController {
     @RequestMapping(value="/createtheatrehall", method= RequestMethod.POST)
     public ResponseEntity createTheatreHall(@Valid @RequestBody TheatreHall theatrehall ) {
 
-        long theatreid = theatrehall.getTheatre_id();
+        long theatreid = theatrehall.getTheatreId();
         Theatre theatre= theatrerepository.findById(theatreid);
-        theatrehall.setVacantseatscount(new LinkedHashMap<>());
-        theatrehall.setVacant_seats(theatrehall.getRows()*theatrehall.getColumns());
+        theatrehall.setVacantSeatsCount(new LinkedHashMap<>());
+        theatrehall.setVacantSeats(theatrehall.getRows()*theatrehall.getColumns());
         theatrehallrepository.save(theatrehall);
 
         return new ResponseEntity<Object>(theatrehall,HttpStatus.OK);

@@ -29,38 +29,39 @@ import java.util.*;
 
 @EnableJpaRepositories("com.example.Repository")
 @RestController
-public class TicketController {
+class TicketController {
 
     @Autowired
     private TheatreHallRepository theatreHallRepository;
 
     @Transactional
-    synchronized JsonArray bookTicketHelper(TheatreHall hall, JsonArray jsonArray, String dateTime) {
-        JsonArray responsejsonArray = new JsonArray();
-        if (hall.getVacant_seats() < jsonArray.size())
+    synchronized JSONArray bookTicketHelper(TheatreHall hall, JSONArray jsonArray, String dateTime) {
+
+        JSONArray responseJsonArray = new JSONArray();
+        if (hall.getVacantSeats() < jsonArray.length())
         {
-            jsonArray.add("Sorry!!Requested seats not available");
+            jsonArray.put("Sorry!!Requested seats not available");
             return jsonArray;
         }
-        Map map = hall.getVacantseatscount();
+        Map map = hall.getVacantSeatsCount();
         Iterator it = map.entrySet().iterator();
-        LinkedHashMap<Byte,LinkedHashSet<Byte>> seatsbookedrowwise = hall.getVacantseatscount().get(dateTime);
+        LinkedHashMap<Byte,LinkedHashSet<Byte>> seatsbookedrowwise = hall.getVacantSeatsCount().get(dateTime);
 
-        for (int i = 0; i < jsonArray.size(); i++)
+        for (int i = 0; i < jsonArray.length(); i++)
         {
             try {
-                JsonArray ja=jsonArray.get(i).getAsJsonArray();
+                JSONArray ja = jsonArray.get(i);
                 if(seatsbookedrowwise.get(Byte.parseByte(ja.get(0).toString())).contains(Byte.parseByte(ja.get(1).toString())))
-                        responsejsonArray.add(String.valueOf("row "+ ja.get(0)+" column "+ja.get(1)));
+                        responseJsonArray.put(String.valueOf("row "+ ja.get(0)+" column "+ja.get(1)));
                 seatsbookedrowwise.get(Byte.parseByte(ja.get(0).toString())).remove(Byte.parseByte(ja.get(1).toString()));
-                hall.getVacantseatscount().put(dateTime, seatsbookedrowwise);
+                hall.getVacantSeatsCount().put(dateTime, seatsbookedrowwise);
                 } catch (JSONException e) {
                         e.printStackTrace();
                     }
         }
-        hall.setVacant_seats(hall.getVacant_seats() - jsonArray.size());
+        hall.setVacantSeats(hall.getVacantSeats() - jsonArray.length());
         theatreHallRepository.save(hall);
-        return responsejsonArray;
+        return responseJsonArray;
         }
     }
 

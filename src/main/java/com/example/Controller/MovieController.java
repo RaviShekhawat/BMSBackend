@@ -4,6 +4,7 @@ package com.example.Controller;
 import com.example.Model.Genre;
 import com.example.Model.Movie;
 import com.example.Repository.MovieRepository;
+import com.example.service.MovieService;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -19,64 +20,41 @@ import java.util.List;
 import java.util.logging.Logger;
 
 @RestController
-@EnableJpaRepositories("com.example.Repository")
-@ComponentScan(basePackages = {"com.example.Controller","com.example.Model"})
-@EntityScan("com.example.Model")
 @Component
 public class MovieController{
 
     @Autowired
     private MovieRepository repository;
 
-    @RequestMapping(value="/GetReactions", method= RequestMethod.GET)
-    public Integer getReactions(Movie movie) {
-
-       return movie.getNo_of_reviews();
-
-    }
+    @Autowired
+    private MovieService movieService;
 
     @RequestMapping(value="/movies", method= RequestMethod.POST)
-    public ResponseEntity createMovie(@Valid @RequestBody Movie movieparam) {
-        repository.save(movieparam);
-        JSONObject object = new JSONObject();
-        object.append("Success Message","Movie Created successfully");
-        return new ResponseEntity<Object>(movieparam,HttpStatus.OK);
+    public ResponseEntity createMovie(@Valid @RequestBody Movie movie) {
+
+        return movieService.createMovie(movie);
 
     }
 
     @RequestMapping(value="/ReviewMovie/{rating}", method= RequestMethod.PUT)
     public ResponseEntity reviewMovie(@RequestParam long id, @PathVariable("rating") float rating)
     {
-        Movie movie = repository.findMovieById(id);
-
-        if(movie==null )
-            return new ResponseEntity<Object>("Movie parameter not provided",HttpStatus.NOT_FOUND);
-        else if(!repository.existsById(movie.getId()))
-            return new ResponseEntity<Object>("Movie parameter not provided",HttpStatus.BAD_REQUEST);
-        else if(rating<0.0F||rating>5.0F)
-            return new ResponseEntity<Object>("Rating has to be between 0 and 5",HttpStatus.BAD_REQUEST);
-
-        float newrating =(movie.getAvg_rating()*movie.getNo_of_reviews()+rating)/(movie.getNo_of_reviews()+1);
-
-        movie.setAvg_rating(newrating);
-        movie.setNo_of_reviews(movie.getNo_of_reviews()+1);
-        repository.save(movie);
-        return new ResponseEntity<Object>("Movie rated successfully",HttpStatus.OK);
+       return movieService.reviewMovie(id,rating);
     }
 
     @RequestMapping(value="/getbydirector", method= RequestMethod.PUT)
-    public ResponseEntity assignDirector(@RequestParam (value="movieid")long id, @RequestParam (value="directorname")String directorname)
+    public ResponseEntity assignDirector(@RequestParam (value="movieid")long id, @RequestParam (value="directorname")String directorName)
     {
         Movie movie= repository.findMovieById(id);
         if(movie==null )
             return new ResponseEntity<Object>("movie id not provided",HttpStatus.BAD_REQUEST);
-        movie.setDirector(directorname);
+        movie.setDirector(directorName);
         repository.save(movie);
 
-        return new ResponseEntity<Object>("Director assigned successfully",HttpStatus.OK);
+        return movieService.assignDirector(id,directorName);
 
     }
-    @RequestMapping(value="/getworstMovies", method= RequestMethod.GET)
+    @RequestMapping(value="/getworstmovies", method= RequestMethod.GET)
     public ResponseEntity findPoorMovies()
     {
         return new ResponseEntity<Object>(repository.findAll(),HttpStatus.ACCEPTED);
@@ -93,39 +71,32 @@ public class MovieController{
     @RequestMapping(value="/getallcities", method= RequestMethod.GET)
     public ResponseEntity getCities(@RequestParam (value="movieid")long id)
     {
-        return new ResponseEntity<Object>(repository.findMovieById(id).getCities(),HttpStatus.OK);
-
+        return movieService.getCities(id);
     }
 
-    @RequestMapping(value="/deleteMovie", method= RequestMethod.DELETE)
+    @RequestMapping(value="/deletemovie", method= RequestMethod.DELETE)
     public HttpStatus deleteMovie(@RequestParam (value="movieid")long id)
     {
-        if(!repository.existsById(id))
-            return HttpStatus.BAD_REQUEST;
-
-        else {
-                repository.delete(repository.findMovieById(id));
-                return HttpStatus.OK;
-        }
+        return movieService.deleteMovie(id);
 
     }
 
     @RequestMapping(value="/getmoviesbygenre", method= RequestMethod.GET)
     public List<Movie> getMoviesByGenre(@RequestParam (value="genre")Genre genre)
     {
-        return repository.findMoviesByGenre(genre);
+        return movieService.getMoviesByGenre(genre);
     }
 
     @RequestMapping(value="/getmoviesbyyear", method= RequestMethod.GET)
-    public List<Movie> getMoviesbyYear(@RequestParam (value="releaseyear")Integer releaseyear)
+    public List<Movie> getMoviesbyYear(@RequestParam (value="releaseyear")Integer releaseYear)
     {
-        return repository.findYearWiseMovies(releaseyear);
+        return movieService.getMoviesByYear(releaseYear);
     }
 
     @RequestMapping(value="/getbestmovie", method= RequestMethod.GET)
-    public List<Movie> findHighestRatedMovieInGivenYear(@RequestParam (value="releaseyear")Integer releaseyear)
+    public List<Movie> findHighestRatedMovieInGivenYear(@RequestParam (value="releaseyear")Integer releaseYear)
     {
-        return repository.findHighestRatedMoviesInGivenYear(releaseyear);
+        return repository.findHighestRatedMoviesInGivenYear(releaseYear);
     }
 
     @RequestMapping(value="/getmoviesbydirector", method= RequestMethod.GET)

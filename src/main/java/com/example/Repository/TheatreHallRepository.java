@@ -10,6 +10,6 @@ import org.springframework.stereotype.Repository;
 public interface TheatreHallRepository extends JpaRepository<TheatreHall,Long>{
 
     @Query(value="select * from theatrehall where id=?1", nativeQuery = true)
-    public TheatreHall findHallById(long id);
+    TheatreHall findHallById(long id);
 
 }
