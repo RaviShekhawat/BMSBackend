@@ -43,18 +43,16 @@ class TicketController {
             jsonArray.put("Sorry!!Requested seats not available");
             return jsonArray;
         }
-        Map map = hall.getVacantSeatsCount();
-        Iterator it = map.entrySet().iterator();
-        LinkedHashMap<Byte,LinkedHashSet<Byte>> seatsbookedrowwise = hall.getVacantSeatsCount().get(dateTime);
+        LinkedHashMap<Byte,LinkedHashSet<Byte>> seatsBookedRowWise = hall.getVacantSeatsCount().get(dateTime);
 
         for (int i = 0; i < jsonArray.length(); i++)
         {
             try {
-                JSONArray ja = jsonArray.get(i);
-                if(seatsbookedrowwise.get(Byte.parseByte(ja.get(0).toString())).contains(Byte.parseByte(ja.get(1).toString())))
-                        responseJsonArray.put(String.valueOf("row "+ ja.get(0)+" column "+ja.get(1)));
-                seatsbookedrowwise.get(Byte.parseByte(ja.get(0).toString())).remove(Byte.parseByte(ja.get(1).toString()));
-                hall.getVacantSeatsCount().put(dateTime, seatsbookedrowwise);
+                JSONArray ja = jsonArray.getJSONArray(i);
+                if(seatsBookedRowWise.get(Byte.parseByte(ja.get(0).toString())).contains(Byte.parseByte(ja.get(1).toString())))
+                        responseJsonArray.put("row " + ja.get(0) + " column " + ja.get(1));
+                seatsBookedRowWise.get(Byte.parseByte(ja.get(0).toString())).remove(Byte.parseByte(ja.get(1).toString()));
+                hall.getVacantSeatsCount().put(dateTime, seatsBookedRowWise);
                 } catch (JSONException e) {
                         e.printStackTrace();
                     }
