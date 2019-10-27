@@ -20,7 +20,7 @@ public class MovieService {
     private MovieRepository repository;
 
     public ResponseEntity createMovie(@Valid @RequestBody Movie movie) {
-
+        System.out.print("Going to create movie");
         repository.save(movie);
         JSONObject object = new JSONObject();
         object.append("Success Message","Movie Created successfully");
