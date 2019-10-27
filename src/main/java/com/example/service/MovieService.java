@@ -21,6 +21,7 @@ public class MovieService {
 
     public ResponseEntity createMovie(@Valid @RequestBody Movie movie) {
         System.out.print("Going to create movie");
+        System.out.print("Creating movie");
         repository.save(movie);
         JSONObject object = new JSONObject();
         object.append("Success Message","Movie Created successfully");
