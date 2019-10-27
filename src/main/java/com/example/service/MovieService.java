@@ -20,8 +20,7 @@ public class MovieService {
     private MovieRepository repository;
 
     public ResponseEntity createMovie(@Valid @RequestBody Movie movie) {
-        System.out.print("Going to create movie");
-        System.out.print("Creating movie");
+        System.out.print("This line is from cherry-pick");
         repository.save(movie);
         JSONObject object = new JSONObject();
         object.append("Success Message","Movie Created successfully");
