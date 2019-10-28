@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 @RestController
 @Component
 public class MovieController{
-
+    //Wanted Changes
     @Autowired
     private MovieRepository repository;
 
