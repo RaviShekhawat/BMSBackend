@@ -37,13 +37,13 @@ public class TheatreController {
     @Autowired
     private TheatreHallRepository theatreHallRepository;
 
-    @RequestMapping(value="/getactivetheatres", method= RequestMethod.GET)
+    @RequestMapping(value="/theatres/active", method= RequestMethod.GET)
     public ResponseEntity getActiveTheatres(@RequestParam String city) {
         return new ResponseEntity<Object>(theatrerepository.findActiveTheatresByCity(city), HttpStatus.OK);
     }
 
     
-    @RequestMapping(value="/addtheatre", method= RequestMethod.POST)
+    @RequestMapping(value="/theatre", method= RequestMethod.POST)
     public ResponseEntity<Theatre> addTheatre(@Valid @RequestBody Theatre theatre ) {
 
         theatrerepository.save(theatre);
@@ -51,15 +51,15 @@ public class TheatreController {
 
     }
 
-    @RequestMapping(value="/addtheatrehall", method= RequestMethod.PUT)
+    @RequestMapping(value="/theatre/hall", method= RequestMethod.PUT)
     public ResponseEntity addHall(@RequestParam(value="theatreid") long theatreid, @RequestParam(value="hallid") long hallid ) {
 
         Theatre theatre = theatrerepository.findById(theatreid);
         TheatreHall theatreHall = theatreHallRepository.findHallById(hallid);
-        if(theatreHall.getTheatre_id()!=0)
+        if(theatreHall.getTheatreId()!=0)
             return new ResponseEntity<Object>("The hall is already attached to another hall",HttpStatus.BAD_REQUEST);
 
-        theatreHall.setTheatre_id(theatreid);
+        theatreHall.setTheatreId(theatreid);
         if(theatre.getShowTimings()==null)
             theatre.setShowTimings(new LinkedHashMap<Long,LinkedList<DateTime>>());
         theatre.getShowTimings().put(hallid,new LinkedList<>());
@@ -70,15 +70,12 @@ public class TheatreController {
         return new ResponseEntity<Theatre>(theatre,HttpStatus.OK);
     }
 
-    @RequestMapping(value="/addmovie", method= RequestMethod.POST)
+    @RequestMapping(value="/theatre/movie", method= RequestMethod.POST)
     public ResponseEntity addMovieShows(@RequestParam (value="theatreid")long theatreid,
                                         @RequestParam (value="movieid")long movieid,
-                                        @RequestParam (value="startdate")@DateTimeFormat(pattern="dd-MM-yyyy HH:mm")DateTime startdate,
-                                        @RequestParam (value="enddate")@DateTimeFormat(pattern="dd-MM-yyyy HH:mm")DateTime enddate,
-                                        @RequestParam (value="showtimings")@DateTimeFormat(pattern="dd-MM-yyyy HH:mm")LinkedList<DateTime> showtimings) {
-
-        //if(userController.validateUser(userid,password).getStatusCode()==HttpStatus.UNAUTHORIZED)
-          //  new ResponseEntity<Object>("Invalid user details",HttpStatus.UNAUTHORIZED);
+                                        @RequestParam (value="startdate")@DateTimeFormat(pattern="dd-MM-yyyy HH:mm")DateTime startDate,
+                                        @RequestParam (value="enddate")@DateTimeFormat(pattern="dd-MM-yyyy HH:mm")DateTime endDate,
+                                        @RequestParam (value="showTimings")@DateTimeFormat(pattern="dd-MM-yyyy HH:mm")LinkedList<DateTime> showTimings) {
 
         Theatre theatre = theatrerepository.findById(theatreid);
         Movie movie = movierepository.findMovieById(movieid);
@@ -87,35 +84,35 @@ public class TheatreController {
         for(Long hallid1:theatre.getShowTimings().keySet())
         {
             TheatreHall hall=theatreHallRepository.findHallById(hallid1);
-            if(hall.getMovie_id()==0) {
-                hall.setMovie_id(movieid);
+            if(hall.getMovieId() == 0) {
+                hall.setMovieId(movieid);
                 theatreHallRepository.save(hall);
                 if(theatre.getMovieNames()==null) {
                     theatre.setMovieNames(new LinkedList<String>());
                 }
-                Map<Long,LinkedList<DateTime>> map=new LinkedHashMap<Long,LinkedList<DateTime>>();
-                map.put(hallid1,showtimings);
-                theatre.getShowTimings().put(hall.getHallid(),showtimings);
+                Map<Long,LinkedList<DateTime>> map = new LinkedHashMap<Long,LinkedList<DateTime>>();
+                map.put(hallid1,showTimings);
+                theatre.getShowTimings().put(hall.getHallId(),showTimings);
                 if(!theatre.getMovieNames().contains(movie.getName()))
                     theatre.getMovieNames().add(movie.getName());
 
-                if(hall.getVacantseatscount()==null)
-                    hall.setVacantseatscount(new LinkedHashMap<>());
-                //hall.setStart_date(startdate);
-                //hall.setEnd_date(enddate);
+                if(hall.getVacantSeatsCount() == null)
+                    hall.setVacantSeatsCount(new LinkedHashMap<>());
+//                hall.setStartDate(startdate);
+//                //hall.setEnd_date(enddate);
                 theatrerepository.save(theatre);
 
 
-                for(int i=0;i<showtimings.size();i++) {
-                    hall.getVacantseatscount().put(showtimings.get(i).toString(),new LinkedHashMap<>());
-                    LinkedHashMap<Byte,LinkedHashSet<Byte>> seats= hall.getVacantseatscount().get(showtimings.get(i).toString());
+                for(int i=0;i<showTimings.size();i++) {
+                    hall.getVacantSeatsCount().put(showTimings.get(i).toString(),new LinkedHashMap<>());
+                    LinkedHashMap<Byte,LinkedHashSet<Byte>> seats= hall.getVacantSeatsCount().get(showTimings.get(i).toString());
                     for (byte j = 0; j < hall.getRows(); j++) {
                         for (byte k = 0; k < hall.getColumns(); k++) {
                                 //seats.computeIfAbsent(j, k1 -> new LinkedHashSet<>());
                             if(!seats.containsKey(j))
                                 seats.put(j,new LinkedHashSet<>());
                             seats.get(j).add(k);
-                            hall.getVacantseatscount().put(showtimings.get(i).toString(),seats);
+                            hall.getVacantSeatsCount().put(showTimings.get(i).toString(),seats);
                             }
                         }
                         //theatreHallRepository.save(hall);
@@ -129,21 +126,21 @@ public class TheatreController {
         return new ResponseEntity<Object>("All halls are booked for this theatre",HttpStatus.OK);
     }
 
-    @RequestMapping(value="/removemovie",method= RequestMethod.POST)
-    public ResponseEntity removeMovieFromAllHalls(@RequestParam (value="theatrename")String theatrename,
-                                                          @RequestParam (value="name")String moviename) {
+    @RequestMapping(value="/movie",method= RequestMethod.DELETE)
+    public ResponseEntity removeMovieFromAllHalls(@RequestParam (value="theatrename")String theatreName,
+                                                          @RequestParam (value="name")String movieName) {
 
-        boolean var=false;
-        Theatre theatre = theatrerepository.findByName(theatrename);
-        Movie movie  = movierepository.findMovieByName(moviename);
+        boolean var = false;
+        Theatre theatre = theatrerepository.findByName(theatreName);
+        Movie movie  = movierepository.findMovieByName(movieName);
         synchronized(theatre) {
             for (Long hallid : theatre.getShowTimings().keySet()) {
                 TheatreHall theatrehall = theatreHallRepository.findHallById(hallid);
-                if (theatrehall.getMovie_id() == movie.getId()) {
+                if (theatrehall.getMovieId() == movie.getId()) {
                     var = true;
-                    theatrehall.setMovie_id(0);
+                    theatrehall.setMovieId(0);
                     theatre.getMovieNames().remove(movie.getName());
-                    theatrehall.getVacantseatscount().clear();
+                    theatrehall.getVacantSeatsCount().clear();
                     theatreHallRepository.save(theatrehall);
                 }
             }
@@ -157,42 +154,39 @@ public class TheatreController {
         }
     }
 
-    @RequestMapping(value="/getmoviesbytheatre", method= RequestMethod.GET)
-    public ResponseEntity getMoviesByTheatre(@RequestParam (value = "theatrename") String theatrename) {
+    @RequestMapping(value="/theatre/movies", method= RequestMethod.GET)
+    public ResponseEntity getMoviesByTheatre(@RequestParam (value = "theatrename") String theatreName) {
 
         JSONObject obj = new JSONObject();
         List<Movie> movielist= new LinkedList<Movie>();
-        Theatre theatre = theatrerepository.findByName(theatrename);
-        if(theatre==null)
+        Theatre theatre = theatrerepository.findByName(theatreName);
+        if(theatre == null)
             return new ResponseEntity<Object>("Incorrect theatre details",HttpStatus.NOT_FOUND);
-        if(movielist.size()==0)
-            return new ResponseEntity<Object>("Currently no movie in this theatre",HttpStatus.BAD_REQUEST);
-
-        return new ResponseEntity<Object>(movielist,HttpStatus.OK);
+        return new ResponseEntity<Object>("Currently no movie in this theatre",HttpStatus.BAD_REQUEST);
 
     }
 
-    @RequestMapping(value="/getShowTimings", method= RequestMethod.GET)
-    public ResponseEntity getShowTimings(@RequestParam (value ="theatrename")String theatrename, @RequestParam (value ="moviename")String moviename  ) {
+    @RequestMapping(value="/theatre/movie/timings", method= RequestMethod.GET)
+    public ResponseEntity getShowTimings(@RequestParam (value ="theatrename")String theatreName, @RequestParam (value ="moviename")String movieName  ) {
 
-        Theatre theatre = theatrerepository.findByName(theatrename);
-        Movie movie  = movierepository.findMovieByName(moviename);
+        Theatre theatre = theatrerepository.findByName(theatreName);
+        Movie movie  = movierepository.findMovieByName(movieName);
         JSONObject obj = new JSONObject();
         List<DateTime> list=new LinkedList<DateTime>();
 
-        if(theatre==null)
+        if(theatre == null)
             return new ResponseEntity<Object>("Theatre doesn't exist",HttpStatus.BAD_REQUEST);
-        else if(movie==null)
+        else if(movie == null)
             return new ResponseEntity<Object>("No movie with this name",HttpStatus.BAD_REQUEST);
 
-        for(Long hallid:theatre.getShowTimings().keySet())
-        {
+        for (Iterator<Long> iterator = theatre.getShowTimings().keySet().iterator(); iterator.hasNext(); ) {
+            Long hallid = iterator.next();
             TheatreHall theatrehall = theatreHallRepository.findHallById(hallid);
-            if(theatrehall.getMovie_id()==movie.getId()) {
+            if (theatrehall.getMovieId() == movie.getId()) {
                 list.addAll(theatre.getShowTimings().get(hallid));
             }
             Collections.sort(list);
-            return new ResponseEntity<Object>(list,HttpStatus.OK);
+            return new ResponseEntity<Object>(list, HttpStatus.OK);
         }
             return new ResponseEntity<Object>("This theatre not showing this movie",HttpStatus.OK);
 

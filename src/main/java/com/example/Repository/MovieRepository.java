@@ -28,8 +28,8 @@ import java.util.List;
     @Query(value="select * from Movie where year(release_date)=?1 and avg_rating>=(select max(avg_rating) from Movie where year(release_date)=?1)", nativeQuery = true)
      List<Movie> findHighestRatedMoviesInGivenYear(@Param("id") int year);
 
-    @Query(value="select m from Movie m where m.directorId =:directorId")
-     List<Movie> findMoviesByDirector(@Param("directorId") int directorId);
+    @Query(value="select m from Movie m where m.directorId =:directorName")
+     List<Movie> findMoviesByDirector(@Param("directorId") String directorName);
 
     @Query(value="select m from Movie m where m.id =:id")
      Movie findMovieById(@Param("id") long id);

@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
 import java.util.List;
 
@@ -20,7 +19,6 @@ public class MovieService {
     private MovieRepository repository;
 
     public ResponseEntity createMovie(@Valid @RequestBody Movie movie) {
-        System.out.print("This line is from cherry-pick");
         repository.save(movie);
         JSONObject object = new JSONObject();
         object.append("Success Message","Movie Created successfully");
@@ -92,7 +90,6 @@ public class MovieService {
         }
 
     }
-
 
     public List<Movie> getMoviesByGenre(@RequestParam (value="genre") Genre genre)
     {

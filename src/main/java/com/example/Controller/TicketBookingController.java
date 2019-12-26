@@ -43,31 +43,31 @@ public class TicketBookingController {
     @Autowired
     private JavaMailSender sender;
 
-    @RequestMapping(value="/findmoviesnearby", method= RequestMethod.GET)
+    @RequestMapping(value="/movies/nearby", method= RequestMethod.GET)
     public ResponseEntity findMoviesNearby(@RequestParam(value="city") String city ) {
         return new ResponseEntity<Object>(ticketBookingRepository.findNearByMovies(city),HttpStatus.OK);
     }
 
-    @RequestMapping(value="/findmoviesinatheatre", method= RequestMethod.GET)
+    @RequestMapping(value="/theatre/movies", method= RequestMethod.GET)
     public ResponseEntity findTheatreWithMovie(@RequestParam(value="theatreid") Long id ) {
         return new ResponseEntity<Object>(ticketBookingRepository.findMoviesByTheatre(id),HttpStatus.OK);
     }
-    @RequestMapping(value="/findcurrentweekmovies", method= RequestMethod.GET)
+    @RequestMapping(value="/movies/currentweek", method= RequestMethod.GET)
     public ResponseEntity<Object> findCurrentWeekMovies() {
         return new ResponseEntity<Object>(ticketBookingRepository.findCurrentWeekMovies(),HttpStatus.OK);
     }
 
     @org.springframework.transaction.annotation.Transactional
     @RequestMapping(value="/bookmovieticket", method= RequestMethod.POST)
-    public ResponseEntity bookMovieTicket(@RequestBody String ticketrequest) {
+    public ResponseEntity bookMovieTicket(@RequestBody String ticketRequest) {
         
         JSONArray responseJSONArray = new JSONArray();
         JSONArray ticketsPositionArray = new JSONArray();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
-        boolean istheatreshowingmovie=false;
+        boolean isTheatreShowingMovie=false;
         JSONParser jsonParser = new JSONParser();
-        JSONObject jo = (JSONObject)jsonParser.parse(ticketrequest);
+        JSONObject jo = (JSONObject)jsonParser.parse(ticketRequest);
 
         ticketsPositionArray=jo.getJSONArray("ticketsposition");
         String theatreName = jo.getString("theatreName");
@@ -75,7 +75,7 @@ public class TicketBookingController {
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd-mm-yyyy");
         sdf.setLenient(false);
-        String useremailid=jo.getString("useremailid");
+        String userEmailId = jo.getString("userEmailId");
 
         //DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         LocalDate showdate= LocalDate.parse(jo.get("showdate").getString(),formatter);
@@ -100,7 +100,7 @@ public class TicketBookingController {
         else if(index==1)
             hh+=showtime.toString().charAt(0);
 
-        else if(showtime.toString().length()>5||showtime.toString().length()<4||!showtime.toString().contains(":")||hh>23||mm>59)
+        else if(showtime.toString().length()>5 || showtime.toString().length()<4 || !showtime.toString().contains(":") || hh>23 || mm>59)
         {
             responseJSONArray.put("showtime is invalid");
             return new ResponseEntity<Object>(responseJSONArray,HttpStatus.BAD_REQUEST);
@@ -116,7 +116,7 @@ public class TicketBookingController {
                         showdate.toString()+"T"+showtime.toString()+":00.000+05:30");
                 if(responseJSONArray.toString().equals("Sorry!!Requested seats not available"))
                     return new ResponseEntity<Object>(responseJSONArray,HttpStatus.OK);
-                istheatreshowingmovie = true;
+                isTheatreShowingMovie = true;
             }
                 if(responseJSONArray.length() == ticketsPositionArray.length()) {
                     TicketBooking ticketBooking = new TicketBooking();
@@ -131,7 +131,7 @@ public class TicketBookingController {
                     MimeMessage message = sender.createMimeMessage();   //sending booking confirmation mail to customer
                     MimeMessageHelper helper = new MimeMessageHelper(message);
                     try {
-                        helper.setTo(useremailid);
+                        helper.setTo(userEmailId);
                         helper.setText("The ticket has been confirmed for the movie!! "+movieName+
                                 " The theatre address is "+theatre.getAddress()+" and the show will start at "
                                  +showtime.toString()+" on "+showdate.toString());
@@ -146,7 +146,7 @@ public class TicketBookingController {
                     return new ResponseEntity<Object>(responseJSONArray, HttpStatus.OK);
                 }
             }
-           if(!istheatreshowingmovie)
+           if(!isTheatreShowingMovie)
            {
                responseJSONArray.put("This theatre not showing this movie");
                return new ResponseEntity<Object>(responseJSONArray,HttpStatus.OK);
