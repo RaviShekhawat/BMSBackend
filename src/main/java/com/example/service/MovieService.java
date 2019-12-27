@@ -19,22 +19,22 @@ public class MovieService {
     private MovieRepository repository;
 
     public ResponseEntity createMovie(@Valid @RequestBody Movie movie) {
-        repository.save(movie);
-        JSONObject object = new JSONObject();
-        object.append("Success Message","Movie Created successfully");
-        return new ResponseEntity<Object>(movie, HttpStatus.OK);
+        Movie savedMovie = repository.save(movie);
+        if(savedMovie != null)
+            return new ResponseEntity<Object>(movie, HttpStatus.OK);
+        else
+            return new ResponseEntity<Object>("Couldn't save the movie", HttpStatus.OK);
 
     }
 
     public ResponseEntity reviewMovie(@RequestParam long id, @PathVariable("rating") float rating)
     {
         Movie movie = repository.findMovieById(id);
-
-        if(movie==null )
+        if(movie == null )
             return new ResponseEntity<Object>("Movie parameter not provided",HttpStatus.NOT_FOUND);
         else if(!repository.existsById(movie.getId()))
             return new ResponseEntity<Object>("Movie parameter not provided",HttpStatus.BAD_REQUEST);
-        else if(rating<0.0F||rating>5.0F)
+        else if(rating < 0.0F || rating > 5.0F)
             return new ResponseEntity<Object>("Rating has to be between 0 and 5",HttpStatus.BAD_REQUEST);
 
         Double newRating =(movie.getAvgRating()*movie.getNoOfReviews()+rating)/(movie.getNoOfReviews()+1);
@@ -46,12 +46,12 @@ public class MovieService {
         return new ResponseEntity<Object>("Movie rated successfully",HttpStatus.OK);
     }
 
-    public ResponseEntity assignDirector(@RequestParam (value="movieid")long id, @RequestParam (value="directorname")String directorname)
+    public ResponseEntity assignDirector(@RequestParam (value="movieid")long id, @RequestParam (value="directorname")String directorName)
     {
         Movie movie= repository.findMovieById(id);
-        if(movie==null )
+        if(movie == null )
             return new ResponseEntity<Object>("movie id not provided",HttpStatus.BAD_REQUEST);
-        movie.setDirector(directorname);
+        movie.setDirector(directorName);
         repository.save(movie);
 
         return new ResponseEntity<Object>("Director assigned successfully",HttpStatus.OK);
@@ -64,20 +64,17 @@ public class MovieService {
 
     }
 
-
     public ResponseEntity getAllMovies()
     {
         return new ResponseEntity<Object>(repository.findAll(),HttpStatus.OK);
 
     }
 
-
     public ResponseEntity getCities(@RequestParam (value="movieid")long id)
     {
         return new ResponseEntity<Object>(repository.findMovieById(id).getCities(),HttpStatus.OK);
 
     }
-
 
     public HttpStatus deleteMovie(@RequestParam (value="movieid")long id)
     {
@@ -96,19 +93,16 @@ public class MovieService {
         return repository.findMoviesByGenre(genre);
     }
 
-
     public List<Movie> getMoviesByYear(@RequestParam (value="releaseyear")Integer releaseYear)
     {
         return repository.findYearWiseMovies(releaseYear);
     }
-
 
     public List<Movie> findHighestRatedMovieInGivenYear(@RequestParam (value="releaseyear")Integer releaseYear)
     {
         return repository.findHighestRatedMoviesInGivenYear(releaseYear);
     }
 
-   
     public List<Movie> findMoviesByDirector(@RequestParam (value="directorname")String directorName)
     {
         return repository.findMoviesByDirector(directorName);

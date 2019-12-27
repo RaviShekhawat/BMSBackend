@@ -1,6 +1,7 @@
 package com.example.Model;
 
 //import com.sun.istack.internal.NotNull;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,16 +23,17 @@ public class User {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    @Column(name="Id")
+    @Column(name = "Id")
     private long id;
 
     @Column(name = "user_name")
+    @JsonProperty("user_name")
     @NotNull
     @Length(min=2, max=12, message = "username should be between 2 and 10 characters")
     private String name;
 
     @Column(name = "password")
-    @Length(min=6, max=12, message = "password should be between 6 and 12 characters")
+    @Length(min = 6, max = 12, message = "password should be between 6 and 12 characters")
     @NotNull
     private String password;
 
@@ -41,6 +43,7 @@ public class User {
     private String emailId;
 
     @Column(name = "contact_no")
+    @JsonProperty("contact_no")
     private String contactNo;
 
 

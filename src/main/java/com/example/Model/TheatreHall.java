@@ -1,6 +1,7 @@
 package com.example.Model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import org.joda.time.DateTime;
 
@@ -20,20 +21,25 @@ public class TheatreHall {
     private long hallId;
 
     @Column(name="no_of_rows")
+    @JsonProperty("no_of_rows")
     @NotNull
     private Byte rows;
 
     @Column(name="no_of_columns")
+    @JsonProperty("no_of_columns")
     @NotNull
     private Byte columns;
 
     @Column(name="is_active")
+    @JsonProperty("is_active")
     private boolean isActive;
 
     @Column(name="theatre_id")
+    @JsonProperty("theatre_id")
     private long theatreId;
 
     @Column(name="movie_id")
+    @JsonProperty("movie_id")
     private long movieId;
 
     @Column(name = "movie_start_date")
@@ -41,10 +47,12 @@ public class TheatreHall {
     private Date startDate;
 
     @Column(name = "movie_end_date")
+    @JsonProperty("movie_end_date")
     @JsonFormat(shape = STRING, pattern = "dd-MM-yyyy")
     private Date endDate;
 
     @Column(name="vacant_seats")
+    @JsonProperty("vacant_seats")
     private int vacantSeats;
 
     @ElementCollection

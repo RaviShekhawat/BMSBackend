@@ -5,6 +5,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -17,7 +18,6 @@ import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
 @Data
 @Entity(name="movie")
 public class Movie {
-
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -32,17 +32,21 @@ public class Movie {
     private MovieType type;
 
     @Column(name="release_date")
+    @JsonProperty("release_date")
     @JsonFormat(shape=STRING, pattern="dd-MM-yyyy")
     @NotNull
     private Date releaseDate;
 
     @Column(name="movie_length")
-    @Max(value=240,message = "Movie Length Exceeded")
+    @JsonProperty("movie_length")
+    @Max(value = 240,message = "Movie Length Exceeded")
     private Double movieLength;
 
     @Column(name="like_percentage")
+    @JsonProperty("like_percentage")
     private Double likePercentage;
 
+    @JsonProperty("no_of_reactions")
     @Column(name="no_of_reactions")
     private int noOfReactions;
 
@@ -52,9 +56,10 @@ public class Movie {
     private Double avgRating;
 
     @Column(name="no_of_reviews")
+    @JsonProperty("no_of_reviews")
     private int noOfReviews;
 
-    @Column(name="director")
+    @Column
     @NotNull
     private String director;
 
@@ -65,7 +70,7 @@ public class Movie {
 
     @ElementCollection
     @CollectionTable(name = "movie_cast", joinColumns = @JoinColumn(name = "movie_id"))
-    @Column(name="cast")
+    @Column(name = "cast")
     private List<String> cast = new ArrayList<String>();
 
     @Enumerated(EnumType.STRING)

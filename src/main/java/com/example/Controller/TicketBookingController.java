@@ -65,11 +65,11 @@ public class TicketBookingController {
         JSONArray ticketsPositionArray = new JSONArray();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
-        boolean isTheatreShowingMovie=false;
+        boolean isTheatreShowingMovie = false;
         JSONParser jsonParser = new JSONParser();
         JSONObject jo = (JSONObject)jsonParser.parse(ticketRequest);
 
-        ticketsPositionArray=jo.getJSONArray("ticketsposition");
+        ticketsPositionArray = jo.getJSONArray("ticketsposition");
         String theatreName = jo.getString("theatreName");
         String movieName = jo.getString("movieName");
 
@@ -78,10 +78,10 @@ public class TicketBookingController {
         String userEmailId = jo.getString("userEmailId");
 
         //DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-        LocalDate showdate= LocalDate.parse(jo.get("showdate").getString(),formatter);
+        LocalDate showdate = LocalDate.parse(jo.get("showdate").getString(),formatter);
 
         DateTimeFormatter f2 = DateTimeFormatter.ofPattern("hh mm a");
-        LocalTime showtime= LocalTime.parse(jo.get("showtime").getString(),f2);
+        LocalTime showtime = LocalTime.parse(jo.get("showtime").getString(),f2);
        /* if(sdf.parse(showdate.toString(), new ParsePosition(0)) == null) {
             responseJSONArray.add("Date is not valid");
             return new ResponseEntity<Object>(responseJSONArray,HttpStatus.BAD_REQUEST);
@@ -92,21 +92,21 @@ public class TicketBookingController {
             return new ResponseEntity<Object>(responseJSONArray,HttpStatus.BAD_REQUEST);
         }*/
 
-        int mm=showtime.toString().charAt(showtime.toString().length()-1)+showtime.toString().charAt(showtime.toString().length()-2)*10;
-        int index=showtime.toString().indexOf(":");
-        int hh=0;
-        if(index==2)
-            hh+=showtime.toString().charAt(0)*10+showtime.toString().charAt(1);
-        else if(index==1)
-            hh+=showtime.toString().charAt(0);
+        int mm = showtime.toString().charAt(showtime.toString().length()-1)+showtime.toString().charAt(showtime.toString().length()-2)*10;
+        int index = showtime.toString().indexOf(":");
+        int hh = 0;
+        if(index == 2)
+            hh += showtime.toString().charAt(0)*10 + showtime.toString().charAt(1);
+        else if(index == 1)
+            hh += showtime.toString().charAt(0);
 
-        else if(showtime.toString().length()>5 || showtime.toString().length()<4 || !showtime.toString().contains(":") || hh>23 || mm>59)
+        else if(showtime.toString().length() > 5 || showtime.toString().length() < 4 || !showtime.toString().contains(":") || hh > 23 || mm>59)
         {
             responseJSONArray.put("showtime is invalid");
             return new ResponseEntity<Object>(responseJSONArray,HttpStatus.BAD_REQUEST);
         }
         Theatre theatre = theatreRepository.findByName(theatreName);
-        Movie movie= movieRepository.findMovieByName(movieName);
+        Movie movie = movieRepository.findMovieByName(movieName);
 
         for (Object o : theatre.getShowTimings().keySet()) {
             TheatreHall theatreHall = theatreHallRepository.findHallById((long) Integer.parseInt(o.toString()));

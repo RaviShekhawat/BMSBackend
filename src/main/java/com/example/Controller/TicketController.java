@@ -43,9 +43,8 @@ class TicketController {
             jsonArray.put("Sorry!!Requested seats not available");
             return jsonArray;
         }
-        Map map = hall.getVacantSeatsCount();
-        LinkedHashMap<Byte,LinkedHashSet<Byte>> seatsBookedRowWise = hall.getVacantSeatsCount().get(dateTime);
 
+        LinkedHashMap<Byte,LinkedHashSet<Byte>> seatsBookedRowWise = hall.getVacantSeatsCount().get(dateTime);
         for (int i = 0; i < jsonArray.length(); i++)
         {
             try {

@@ -1,5 +1,6 @@
 package com.example.Model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import org.joda.time.DateTime;
 
@@ -30,11 +31,13 @@ public class Theatre {
     private String city;
 
     @Column(name="is_active")
+    @JsonProperty("is_active")
     @NotNull
     private Boolean isActive;
 
     @ElementCollection
     @CollectionTable(name = "theatre_movies", joinColumns = @JoinColumn(name = "theatre_id"))
+    @JsonProperty("movies")
     @Column(name = "movies")
     private List<String> movieNames = new LinkedList<>();
 

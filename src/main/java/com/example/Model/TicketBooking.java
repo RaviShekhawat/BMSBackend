@@ -1,6 +1,7 @@
 package com.example.Model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import org.joda.time.DateTime;
 
@@ -16,7 +17,6 @@ import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
 @Data
 @Entity(name="ticketbooking")
 public class TicketBooking {
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,18 +37,22 @@ public class TicketBooking {
     private float price;
 
     @Column(name = "booking_date")
+    @JsonProperty("booking_date")
     @JsonFormat(shape = STRING, pattern = "dd-MM-yyyy")
     private Date bookingDate;
 
     @Column(name = "start_time")
     @NotNull
+    @JsonProperty("start_time")
     private DateTime startTime;
 
     @Column(name = "end_time")
     @NotNull
+    @JsonProperty("end_time")
     private DateTime endTime;
 
     @Column(name = "is_refundable")
+    @JsonProperty("is_refundable")
     private Boolean isRefundable;
 
 
